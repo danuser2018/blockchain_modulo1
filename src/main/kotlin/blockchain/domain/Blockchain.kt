@@ -18,14 +18,13 @@ fun genesisBlock(timestamp: Long) = Block(
     previousHash = "0"
 )
 
-fun Blockchain.createBlock(timestamp: Long, proof: Int, previousHash: String): Blockchain = with(
+fun Blockchain.createBlock(timestamp: Long, proof: Int, previousHash: String): Blockchain =
     Block(
         index = size,
         timestamp = timestamp,
         proof = proof,
         previousHash = previousHash
-    )
-) {
-    toMutableList() + this
-}
+    ).let { newBlock ->
+        toMutableList() + newBlock
+    }
 
