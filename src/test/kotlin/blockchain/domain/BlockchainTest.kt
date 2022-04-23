@@ -8,7 +8,7 @@ class BlockchainTest : StringSpec({
         val now = System.currentTimeMillis()
         genesisBlock(now).apply {
             index shouldBe 0
-            proof shouldBe 1
+            proof shouldBe 1.0
             timestamp shouldBe now
             previousHash shouldBe "0"
         }
@@ -26,13 +26,13 @@ class BlockchainTest : StringSpec({
         val now = System.currentTimeMillis()
         emptyBlockchain(System.currentTimeMillis()).createBlock(
             timestamp = now,
-            proof = 2,
+            proof = 2.0,
             previousHash = "previous_hash"
         ).apply {
             size shouldBe 2
             this[1].index shouldBe 1
             this[1].timestamp shouldBe now
-            this[1].proof shouldBe 2
+            this[1].proof shouldBe 2.0
             this[1].previousHash shouldBe "previous_hash"
         }
     }
