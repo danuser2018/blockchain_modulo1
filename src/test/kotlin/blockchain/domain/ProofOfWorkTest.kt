@@ -12,7 +12,7 @@ class ProofOfWorkTest : StringSpec({
         proofOfWork(
             previousProof = previousProof,
             complexOperation = { a, b -> a.pow(2) - b.pow(2) },
-            sha256 = { DigestUtils.sha256Hex(it.toString()) },
+            toHash = { DigestUtils.sha256Hex(it.toString()) },
             isValid = { it.startsWith("0000") }
         ).apply {
             val hash = (this.pow(2) - previousProof.pow(2)).let { DigestUtils.sha256Hex(it.toString()) }
