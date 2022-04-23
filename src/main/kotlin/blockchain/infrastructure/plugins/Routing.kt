@@ -1,4 +1,4 @@
-package blockchain.plugins
+package blockchain.infrastructure.plugins
 
 import io.ktor.server.routing.*
 import io.ktor.http.*
