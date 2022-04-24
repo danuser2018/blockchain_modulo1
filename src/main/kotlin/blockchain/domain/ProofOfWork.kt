@@ -1,20 +1,18 @@
 package blockchain.domain
 
 tailrec fun proofOfWork(
-    previousProof: Double,
-    newProof: Double = 1.0,
-    complexOperation: (Double, Double) -> Double,
-    toHash: (Double) -> String,
+    seed: Double,
+    candidate: Double = 1.0,
+    f: (Double, Double) -> String,
     isValid: (String) -> Boolean
 ): Double {
-    val hash = toHash(complexOperation(newProof, previousProof))
+    val hash = f(candidate, seed)
     return when {
-        isValid(hash) -> newProof
+        isValid(hash) -> candidate
         else -> proofOfWork(
-            previousProof = previousProof,
-            newProof = newProof + 1.0,
-            toHash = toHash,
-            complexOperation = complexOperation,
+            seed = seed,
+            candidate = candidate + 1.0,
+            f = f,
             isValid = isValid
         )
     }
