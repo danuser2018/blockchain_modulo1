@@ -4,7 +4,7 @@ typealias Blockchain = List<Block>
 
 fun emptyBlockchain(timestamp: Long) = listOf(genesisBlock(timestamp))
 
-fun Blockchain.createBlock(timestamp: Long, proof: Double, previousHash: String): Blockchain =
+fun Blockchain.createBlock(timestamp: Long, proof: ProofOfWork, previousHash: String): Blockchain =
     Block(
         index = size,
         timestamp = timestamp,
@@ -13,4 +13,7 @@ fun Blockchain.createBlock(timestamp: Long, proof: Double, previousHash: String)
     ).let { newBlock ->
         toMutableList() + newBlock
     }
+
+
+
 
