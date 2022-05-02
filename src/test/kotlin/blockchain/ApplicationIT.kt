@@ -7,8 +7,8 @@ import blockchain.config.configureRouting
 import blockchain.config.configureSerialization
 import blockchain.config.updateBlockchain
 import blockchain.domain.Block
+import blockchain.domain.Blockchain
 import blockchain.domain.emptyBlockchain
-import blockchain.infrastructure.presentation.dto.BlockDTO
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -18,7 +18,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
-import java.text.DateFormat
 import java.time.Instant
 
 class ApplicationIT : StringSpec({
@@ -40,11 +39,11 @@ class ApplicationIT : StringSpec({
 
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
-                body<List<BlockDTO>>().apply {
+                body<Blockchain>().apply {
                     size shouldBe 1
                     with(this[0]) {
                         index shouldBe 0
-                        proof shouldBe "1"
+                        proof shouldBe 1.0
                         previousHash shouldBe "0"
                     }
                 }
@@ -70,17 +69,17 @@ class ApplicationIT : StringSpec({
 
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
-                body<List<BlockDTO>>().let { blockchain ->
+                body<Blockchain>().let { blockchain ->
                     blockchain.size shouldBe 2
                     with(blockchain[0]) {
                         index shouldBe 0
-                        proof shouldBe "1"
+                        proof shouldBe 1.0
                         previousHash shouldBe "0"
                     }
                     with(blockchain[1]) {
                         index shouldBe 1
-                        proof shouldBe "38561"
-                        previousHash shouldBe blockchain[0].hash
+                        proof shouldBe 38561.0
+                        previousHash shouldBe blockchain[0].hash()
                     }
                 }
             }
@@ -103,23 +102,12 @@ class ApplicationIT : StringSpec({
 
             client.post("/block").apply {
                 status shouldBe HttpStatusCode.OK
-                body<BlockDTO>().let { block ->
-                    with(blockchain.last()) {
-                        block.index shouldBe index
-                        block.timestamp shouldBe DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM)
-                            .format(timestamp)
-                        block.proof shouldBe proof.toInt().toString()
-                        block.previousHash shouldBe previousHash
-                        block.hash shouldBe this.hash()
-                    }
+                body<Block>().apply {
+                    blockchain.size shouldBe 2
+                    index shouldBe 1
+                    proof shouldBe 38561.0
+                    previousHash shouldBe blockchain[0].hash()
                 }
-            }
-
-            blockchain.size shouldBe 2
-            with(blockchain.last()) {
-                index shouldBe 1
-                proof shouldBe 38561.0
-                previousHash shouldBe blockchain[0].hash()
             }
         }
     }
@@ -174,5 +162,4 @@ class ApplicationIT : StringSpec({
             }
         }
     }
-
 })

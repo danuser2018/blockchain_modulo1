@@ -2,7 +2,6 @@ package blockchain.config
 
 import blockchain.application.isValid
 import blockchain.application.mineABlock
-import blockchain.infrastructure.presentation.dto.toDTO
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.server.application.*
@@ -11,9 +10,9 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        post("/block") { call.respond(OK, mineABlock().toDTO()) }
+        post("/block") { call.respond(OK, mineABlock()) }
 
-        get("/blockchain") { call.respond(OK, blockchain.map { it.toDTO() }) }
+        get("/blockchain") { call.respond(OK, blockchain) }
 
         get("/blockchain/validation") {
             when {
