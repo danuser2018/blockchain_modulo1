@@ -6,7 +6,7 @@ import blockchain.domain.emptyBlockchain
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
-class BlockchainValidationTest : StringSpec({
+class ValidationTest : StringSpec({
     "isValid() returns false for an empty list" {
         val chain = emptyList<Block>()
         chain.isValid() shouldBe false

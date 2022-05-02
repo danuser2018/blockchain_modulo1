@@ -9,5 +9,5 @@ private val mapper by lazy {
     jacksonObjectMapper()
 }
 
-fun Block.hash(): String = mapper.writeValueAsString(this).apply { DigestUtils.sha256Hex(this) }
+fun Block.hash(): String = mapper.writeValueAsString(this).run { DigestUtils.sha256Hex(this) }
 fun ProofOfWork.hash(): String = DigestUtils.sha256Hex(this.toString())

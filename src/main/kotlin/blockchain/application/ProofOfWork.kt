@@ -29,4 +29,5 @@ fun isAValidProof(
 ): Boolean = isValid(f(curr, prev))
 
 private fun powerOf2Diff(a: Double, b: Double): String = (a.pow(2) - b.pow(2)).hash()
-private fun hashWith4Zeros(hash: String): Boolean = hash.startsWith("0000")
+private fun hashWith4Zeros(hash: String): Boolean = hash.startsWith("000000")
+
