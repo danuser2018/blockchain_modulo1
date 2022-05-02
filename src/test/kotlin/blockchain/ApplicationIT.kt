@@ -24,7 +24,6 @@ class ApplicationIT : StringSpec({
     "Test get empty blockchain" {
 
         testApplication {
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
             application {
                 configureRouting()
                 configureSerialization()
@@ -35,6 +34,8 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
+
+            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
 
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
@@ -52,7 +53,6 @@ class ApplicationIT : StringSpec({
 
     "Test to add a new block" {
         testApplication {
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
             application {
                 configureRouting()
                 configureSerialization()
@@ -63,6 +63,8 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
+
+            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
 
             client.post("/block").apply {
                 status shouldBe HttpStatusCode.OK
@@ -77,7 +79,6 @@ class ApplicationIT : StringSpec({
 
     "Test isValid for a valid blockchain" {
         testApplication {
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
             application {
                 configureRouting()
                 configureSerialization()
@@ -89,6 +90,7 @@ class ApplicationIT : StringSpec({
                 }
             }
 
+            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
             mineABlock()
 
             client.get("/blockchain/validation").apply {
@@ -99,7 +101,6 @@ class ApplicationIT : StringSpec({
 
     "Test isValid for an invalid blockchain" {
         testApplication {
-            blockchain = emptyList()
             application {
                 configureRouting()
                 configureSerialization()
@@ -110,6 +111,8 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
+
+            blockchain = emptyList()
 
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.InternalServerError
