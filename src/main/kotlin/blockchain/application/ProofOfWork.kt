@@ -30,3 +30,4 @@ fun isAValidProof(
 
 private fun powerOf2Diff(a: Double, b: Double): String = (a.pow(2) - b.pow(2)).hash()
 private fun hashWith4Zeros(hash: String): Boolean = hash.startsWith("0000")
+

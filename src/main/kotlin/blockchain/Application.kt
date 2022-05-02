@@ -1,7 +1,7 @@
 package blockchain
 
-import blockchain.infrastructure.plugins.configureRouting
-import blockchain.infrastructure.plugins.configureSerialization
+import blockchain.config.configureRouting
+import blockchain.config.configureSerialization
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 

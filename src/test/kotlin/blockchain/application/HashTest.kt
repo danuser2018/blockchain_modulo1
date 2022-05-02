@@ -8,26 +8,22 @@ import org.apache.commons.codec.digest.DigestUtils
 
 class HashTest: StringSpec({
 
-    val mapper by lazy {
-        jacksonObjectMapper()
-    }
-
     "Block's hash should be the result of apply SHA256 over a json version of the block" {
         val block = Block(
             index = 1,
-            timestamp = System.currentTimeMillis(),
+            timestamp = 0L,
             proof = 1.0,
             previousHash = "0"
         )
 
-        val expected = mapper.writeValueAsString(block).apply { DigestUtils.sha256Hex(this) }
+        val expected = "699a72c25cb594be0823ff99681db704cb48b78b93a8ff6e17596eaa01a0fc66"
 
         block.hash() shouldBe expected
     }
 
     "ProofOfWork's hash should be the result of apply SHA256 over a string version of the block" {
         val proof = 1.0
-        val expected = DigestUtils.sha256Hex(proof.toString())
+        val expected = "d0ff5974b6aa52cf562bea5921840c032a860a91a3512f7fe8f768f6bbe005f6"
 
         proof.hash() shouldBe expected
     }
