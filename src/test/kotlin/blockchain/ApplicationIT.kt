@@ -51,31 +51,31 @@ class ApplicationIT : StringSpec({
         }
     }
 
-    "Test to add a new block" {
-        testApplication {
-            application {
-                configureRouting()
-                configureSerialization()
-            }
-
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
-                }
-            }
-
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
-
-            client.post("/block").apply {
-                status shouldBe HttpStatusCode.OK
-                body<Block>().apply {
-                    index shouldBe 1
-                    proof shouldBe 38561.0
-                    previousHash shouldBe blockchain[0].hash()
-                }
-            }
-        }
-    }
+//    "Test to add a new block" {
+//        testApplication {
+//            application {
+//                configureRouting()
+//                configureSerialization()
+//            }
+//
+//            val client = createClient {
+//                install(ContentNegotiation) {
+//                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+//                }
+//            }
+//
+//            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
+//
+//            client.post("/block").apply {
+//                status shouldBe HttpStatusCode.OK
+//                body<Block>().apply {
+//                    index shouldBe 1
+//                    proof shouldBe 38561.0
+//                    previousHash shouldBe blockchain[0].hash()
+//                }
+//            }
+//        }
+//    }
 
     "Test isValid for a valid blockchain" {
         testApplication {
@@ -99,24 +99,24 @@ class ApplicationIT : StringSpec({
         }
     }
 
-    "Test isValid for an invalid blockchain" {
-        testApplication {
-            application {
-                configureRouting()
-                configureSerialization()
-            }
-
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
-                }
-            }
-
-            blockchain = emptyList()
-
-            client.get("/blockchain/validation").apply {
-                status shouldBe HttpStatusCode.InternalServerError
-            }
-        }
-    }
+//    "Test isValid for an invalid blockchain" {
+//        testApplication {
+//            application {
+//                configureRouting()
+//                configureSerialization()
+//            }
+//
+//            val client = createClient {
+//                install(ContentNegotiation) {
+//                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+//                }
+//            }
+//
+//            blockchain = emptyList()
+//
+//            client.get("/blockchain/validation").apply {
+//                status shouldBe HttpStatusCode.InternalServerError
+//            }
+//        }
+//    }
 })
