@@ -10,6 +10,7 @@ import blockchain.domain.Block
 import blockchain.domain.Blockchain
 import blockchain.domain.emptyBlockchain
 import com.fasterxml.jackson.databind.SerializationFeature
+import io.kotest.common.runBlocking
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.*
@@ -65,7 +66,9 @@ class ApplicationIT : StringSpec({
                 }
             }
 
-            mineABlock()
+            runBlocking {
+                mineABlock()
+            }
 
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
@@ -148,13 +151,15 @@ class ApplicationIT : StringSpec({
                 }
             }
 
-            updateBlockchain {
-                blockchain + Block(
-                    index = 0,
-                    timestamp = Instant.now().toEpochMilli(),
-                    proof = 1.0,
-                    previousHash = "0"
-                )
+            runBlocking {
+                updateBlockchain {
+                    blockchain + Block(
+                        index = 0,
+                        timestamp = Instant.now().toEpochMilli(),
+                        proof = 1.0,
+                        previousHash = "0"
+                    )
+                }
             }
 
             client.get("/blockchain/validation").apply {
