@@ -5,12 +5,10 @@ import blockchain.application.mineABlock
 import blockchain.config.blockchain
 import blockchain.config.configureRouting
 import blockchain.config.configureSerialization
-import blockchain.config.updateBlockchain
 import blockchain.domain.Block
 import blockchain.domain.Blockchain
 import blockchain.domain.emptyBlockchain
 import com.fasterxml.jackson.databind.SerializationFeature
-import io.kotest.common.runBlocking
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.*
@@ -52,43 +50,6 @@ class ApplicationIT : StringSpec({
         }
     }
 
-    "Test get blockchain with 2 blocks" {
-        testApplication {
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
-            application {
-                configureRouting()
-                configureSerialization()
-            }
-
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
-                }
-            }
-
-            runBlocking {
-                mineABlock()
-            }
-
-            client.get("/blockchain").apply {
-                status shouldBe HttpStatusCode.OK
-                body<Blockchain>().let { blockchain ->
-                    blockchain.size shouldBe 2
-                    with(blockchain[0]) {
-                        index shouldBe 0
-                        proof shouldBe 1.0
-                        previousHash shouldBe "0"
-                    }
-                    with(blockchain[1]) {
-                        index shouldBe 1
-                        proof shouldBe 38561.0
-                        previousHash shouldBe blockchain[0].hash()
-                    }
-                }
-            }
-        }
-    }
-
     "Test to add a new block" {
         testApplication {
             blockchain = emptyBlockchain(Instant.now().toEpochMilli())
@@ -106,7 +67,6 @@ class ApplicationIT : StringSpec({
             client.post("/block").apply {
                 status shouldBe HttpStatusCode.OK
                 body<Block>().apply {
-                    blockchain.size shouldBe 2
                     index shouldBe 1
                     proof shouldBe 38561.0
                     previousHash shouldBe blockchain[0].hash()
@@ -139,7 +99,7 @@ class ApplicationIT : StringSpec({
 
     "Test isValid for an invalid blockchain" {
         testApplication {
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
+            blockchain = emptyList()
             application {
                 configureRouting()
                 configureSerialization()
@@ -148,17 +108,6 @@ class ApplicationIT : StringSpec({
             val client = createClient {
                 install(ContentNegotiation) {
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
-                }
-            }
-
-            runBlocking {
-                updateBlockchain {
-                    blockchain + Block(
-                        index = 0,
-                        timestamp = Instant.now().toEpochMilli(),
-                        proof = 1.0,
-                        previousHash = "0"
-                    )
                 }
             }
 
