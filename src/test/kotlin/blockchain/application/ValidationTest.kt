@@ -26,7 +26,7 @@ class ValidationTest : StringSpec({
         val chain = with(emptyBlockchain(System.currentTimeMillis())) {
             this.createBlock(
                 timestamp = System.currentTimeMillis(),
-                proof = 38561.0,
+                proof = 57870.0,
                 previousHash = this[0].hash()
             )
         }
@@ -37,7 +37,7 @@ class ValidationTest : StringSpec({
         val chain = with(emptyBlockchain(System.currentTimeMillis())) {
             this.createBlock(
                 timestamp = System.currentTimeMillis(),
-                proof = 38561.0,
+                proof = 57870.0,
                 previousHash = "previous_hash"
             )
         }

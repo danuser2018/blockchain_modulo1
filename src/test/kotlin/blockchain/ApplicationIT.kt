@@ -2,12 +2,9 @@ package blockchain
 
 import blockchain.application.hash
 import blockchain.application.mineABlock
-import blockchain.config.blockchain
-import blockchain.config.configureRouting
-import blockchain.config.configureSerialization
+import blockchain.config.*
 import blockchain.domain.Block
 import blockchain.domain.Blockchain
-import blockchain.domain.emptyBlockchain
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -17,7 +14,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
-import java.time.Instant
+import kotlinx.coroutines.launch
 
 class ApplicationIT : StringSpec({
 
@@ -25,6 +22,7 @@ class ApplicationIT : StringSpec({
 
         testApplication {
             application {
+                configureBlockchain()
                 configureRouting()
                 configureSerialization()
             }
@@ -34,8 +32,6 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
-
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
 
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
@@ -54,6 +50,7 @@ class ApplicationIT : StringSpec({
     "Test to add a new block" {
         testApplication {
             application {
+                configureBlockchain()
                 configureRouting()
                 configureSerialization()
             }
@@ -64,13 +61,11 @@ class ApplicationIT : StringSpec({
                 }
             }
 
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
-
             client.post("/block").apply {
                 status shouldBe HttpStatusCode.OK
                 body<Block>().apply {
                     index shouldBe 1
-                    proof shouldBe 38561.0
+                    proof shouldBe 57870.0
                     previousHash shouldBe blockchain[0].hash()
                 }
             }
@@ -80,6 +75,10 @@ class ApplicationIT : StringSpec({
     "Test isValid for a valid blockchain" {
         testApplication {
             application {
+                configureBlockchain()
+                launch {
+                    mineABlock()
+                }
                 configureRouting()
                 configureSerialization()
             }
@@ -89,9 +88,6 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
-
-            blockchain = emptyBlockchain(Instant.now().toEpochMilli())
-            mineABlock()
 
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.OK
@@ -102,6 +98,12 @@ class ApplicationIT : StringSpec({
     "Test isValid for an invalid blockchain" {
         testApplication {
             application {
+                configureBlockchain()
+                launch {
+                    updateBlockchain {
+                        emptyList()
+                    }
+                }
                 configureRouting()
                 configureSerialization()
             }
@@ -111,8 +113,6 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
-
-            blockchain = emptyList()
 
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.InternalServerError
