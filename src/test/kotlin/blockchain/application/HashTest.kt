@@ -1,10 +1,8 @@
 package blockchain.application
 
 import blockchain.domain.Block
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import org.apache.commons.codec.digest.DigestUtils
 
 class HashTest: StringSpec({
 
