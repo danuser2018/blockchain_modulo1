@@ -24,26 +24,27 @@ class ApplicationIT : StringSpec({
                 configureBlockchain()
                 configureRouting()
                 configureSerialization()
-            }
 
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
-                }
-            }
+                launch {
+                    val client = this@testApplication.createClient {
+                        install(ContentNegotiation) {
+                            jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+                        }
+                    }
 
-            client.get("/blockchain").apply {
-                status shouldBe HttpStatusCode.OK
-                body<Blockchain>().apply {
-                    size shouldBe 1
-                    with(this[0]) {
-                        index shouldBe 0
-                        proof shouldBe 1.0
-                        previousHash shouldBe "0"
+                    client.get("/blockchain").apply {
+                        status shouldBe HttpStatusCode.OK
+                        body<Blockchain>().apply {
+                            size shouldBe 1
+                            with(this[0]) {
+                                index shouldBe 0
+                                proof shouldBe 1.0
+                                previousHash shouldBe "0"
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -83,16 +84,18 @@ class ApplicationIT : StringSpec({
                 }
                 configureRouting()
                 configureSerialization()
-            }
 
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+                launch {
+                    val client = this@testApplication.createClient {
+                        install(ContentNegotiation) {
+                            jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+                        }
+                    }
+
+                    client.get("/blockchain/validation").apply {
+                        status shouldBe HttpStatusCode.OK
+                    }
                 }
-            }
-
-            client.get("/blockchain/validation").apply {
-                status shouldBe HttpStatusCode.OK
             }
         }
     }
@@ -108,16 +111,18 @@ class ApplicationIT : StringSpec({
                 }
                 configureRouting()
                 configureSerialization()
-            }
 
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+                launch {
+                    val client = this@testApplication.createClient {
+                        install(ContentNegotiation) {
+                            jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+                        }
+                    }
+
+                    client.get("/blockchain/validation").apply {
+                        status shouldBe HttpStatusCode.InternalServerError
+                    }
                 }
-            }
-
-            client.get("/blockchain/validation").apply {
-                status shouldBe HttpStatusCode.InternalServerError
             }
         }
     }
