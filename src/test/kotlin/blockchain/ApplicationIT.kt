@@ -14,7 +14,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ApplicationIT : StringSpec({
@@ -32,8 +31,6 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
-
-            delay(1000)
 
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
@@ -56,22 +53,22 @@ class ApplicationIT : StringSpec({
                 configureBlockchain()
                 configureRouting()
                 configureSerialization()
-            }
 
-            val client = createClient {
-                install(ContentNegotiation) {
-                    jackson { enable(SerializationFeature.INDENT_OUTPUT) }
-                }
-            }
+                launch {
+                    val client = this@testApplication.createClient {
+                        install(ContentNegotiation) {
+                            jackson { enable(SerializationFeature.INDENT_OUTPUT) }
+                        }
+                    }
 
-            delay(1000)
-
-            client.post("/block").apply {
-                status shouldBe HttpStatusCode.OK
-                body<Block>().apply {
-                    index shouldBe 1
-                    proof shouldBe 57870.0
-                    previousHash shouldBe blockchain[0].hash()
+                    client.post("/block").apply {
+                        status shouldBe HttpStatusCode.OK
+                        body<Block>().apply {
+                            index shouldBe 1
+                            proof shouldBe 57870.0
+                            previousHash shouldBe blockchain[0].hash()
+                        }
+                    }
                 }
             }
         }
@@ -93,8 +90,6 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
-
-            delay(1000)
 
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.OK
@@ -120,8 +115,6 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
-
-            delay(1000)
 
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.InternalServerError
