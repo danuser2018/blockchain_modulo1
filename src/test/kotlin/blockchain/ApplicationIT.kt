@@ -14,12 +14,12 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ApplicationIT : StringSpec({
 
     "Test get empty blockchain" {
-
         testApplication {
             application {
                 configureBlockchain()
@@ -33,6 +33,8 @@ class ApplicationIT : StringSpec({
                 }
             }
 
+            delay(1000)
+
             client.get("/blockchain").apply {
                 status shouldBe HttpStatusCode.OK
                 body<Blockchain>().apply {
@@ -44,6 +46,7 @@ class ApplicationIT : StringSpec({
                     }
                 }
             }
+
         }
     }
 
@@ -60,6 +63,8 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
+
+            delay(1000)
 
             client.post("/block").apply {
                 status shouldBe HttpStatusCode.OK
@@ -89,6 +94,8 @@ class ApplicationIT : StringSpec({
                 }
             }
 
+            delay(1000)
+
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.OK
             }
@@ -113,6 +120,8 @@ class ApplicationIT : StringSpec({
                     jackson { enable(SerializationFeature.INDENT_OUTPUT) }
                 }
             }
+
+            delay(1000)
 
             client.get("/blockchain/validation").apply {
                 status shouldBe HttpStatusCode.InternalServerError

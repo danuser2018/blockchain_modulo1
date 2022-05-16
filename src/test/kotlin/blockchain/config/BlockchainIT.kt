@@ -19,7 +19,6 @@ class BlockchainIT : StringSpec({
                     }
                 }
             }
-
         }
     }
 

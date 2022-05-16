@@ -12,7 +12,7 @@ lateinit var blockchain: Blockchain
 
 private val mutex = Mutex()
 
-fun Application.configureBlockchain() = this.launch {
+fun Application.configureBlockchain() = launch {
     mutex.withLock { blockchain = emptyBlockchain(Instant.now().toEpochMilli()) }
 }
 
